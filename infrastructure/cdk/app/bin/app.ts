@@ -2,17 +2,17 @@
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
 import { AppStack } from '../lib/app-stack';
-import { DatabaseStack } from '../lib/database-stack';
+import { BackendStack } from '../lib/backend-stack';
 import { FrontendStack } from '../lib/frontend-stack';
 
-appName = process.env.APP_NAME;
-bucketName = appName + "bucket";
-
 const app = new cdk.App();
+
+const bucketName = process.env.APP_NAME + "-bucket";
+
 // new AppStack(app, 'AppStack');
-// new DatabaseStack (app, 'DatabaseStack')
+// new BackendStack (app, 'BackendStack')
 new FrontendStack (app, 'FrontendStack', {
-	bucketName: bucketName;
+	s3BucketName: bucketName
 })
 
 app.synth()

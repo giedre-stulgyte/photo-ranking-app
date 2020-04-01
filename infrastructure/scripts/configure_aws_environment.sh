@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Configuring AWS CLI..."
+
 # AWS Credentials
 read -p "AWS Account ID ($( [  ! -z $AWS_ACCOUNT_ID ] && echo *********${AWS_ACCOUNT_ID:(-3)})): " aws_account_id
 if [ ! -z ${aws_account_id} ]; then
@@ -33,6 +35,16 @@ elif [ -z $AWS_REGION ]; then
 	return
 fi
 
-aws configure
+read -p "App Name ($( [  ! -z $APP_NAME ] && echo ${APP_NAME})): " app_name
+if [ ! -z ${app_name} ]; then
+	export APP_NAME=${app_name}
+elif [ -z $APP_NAME ]; then 
+	echo "Missing app name; Aborting"; 
+	return
+fi
+
+aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID} 
+aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+aws configure set default.region ${AWS_REGION} 
 
 return 1

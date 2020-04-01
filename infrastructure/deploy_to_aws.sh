@@ -6,21 +6,21 @@ source install_venv.sh
 cd ..
 
 
-# Configure environment variablescd cdk
-source scripts/configure_aws_cli.sh
-source scripts/set_aws_app_name.sh
+source scripts/configure_aws_environment.sh
 
 # Deploy CDK applicaation to AWS
-cd cdk
+cd cdk/app
 echo -e "Deploying CDK toolkit stack..."
 cdk bootstrap aws://${AWS_ACCOUNT_ID}/${AWS_REGION}
 
-npm run build
-# cdk deploy DatabaseStack
+# npm run build
+# # cdk deploy DatabaseStack
 
-echo -e "Deploying CDK frontend stack..."
-cdk deploy FrontendStack
+# echo -e "Deploying CDK frontend stack..."
+# cdk deploy FrontendStack
 
 # Deactivate Python virtual environment
 deactivate
 cd ..
+
+echo "Done! Virtual environment deactivated."
