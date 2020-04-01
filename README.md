@@ -19,4 +19,5 @@ Pre-requisites:
 To deploy: 
 
 cd infrastructure
+
 source deploy_to_aws.sh
