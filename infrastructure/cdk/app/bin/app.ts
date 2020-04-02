@@ -7,7 +7,7 @@ import { FrontendStack } from '../lib/frontend-stack';
 
 const app = new cdk.App();
 
-const bucketName = process.env.APP_NAME + "-bucket";
+const bucketName = process.env.APP_NAME + "-bucket"; 
 
 // new AppStack(app, 'AppStack');
 // new BackendStack (app, 'BackendStack')
