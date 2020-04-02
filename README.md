@@ -12,12 +12,14 @@ Pre-requisites:
 	- Permissions: 
 		- AmazonS3FullAccess
 		- AWSCloudFormationFullAccess
+		- AmazonDynamoDBFullAccess
+		- (custom) IAM: CreateRole, DeleteRolePolicy, PutRolePolicy
 - Python3
 - Pip3
 - npm 6 or later
 
 To deploy: 
 
-cd infrastructure
-
-source deploy_to_aws.sh
+- cd deploy
+- source deploy_infrastructure.sh
+- source deploy_frontent.sh

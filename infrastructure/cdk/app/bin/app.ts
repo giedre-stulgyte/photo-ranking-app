@@ -1,18 +1,19 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
-import { AppStack } from '../lib/app-stack';
 import { BackendStack } from '../lib/backend-stack';
 import { FrontendStack } from '../lib/frontend-stack';
 
 const app = new cdk.App();
 
-const bucketName = process.env.APP_NAME + "-bucket"; 
+const AWSResourcePrefix = process.env.APP_NAME || "default-resource-name";
 
-// new AppStack(app, 'AppStack');
-// new BackendStack (app, 'BackendStack')
+new BackendStack (app, 'BackendStack', {
+	resourcePrefix: AWSResourcePrefix
+})
+
 new FrontendStack (app, 'FrontendStack', {
-	s3BucketName: bucketName
+	resourcePrefix: AWSResourcePrefix
 })
 
 app.synth()
