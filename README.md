@@ -1,3 +1,5 @@
+(work in progress)
+
 Compatibility:
 
 - macOS (Catalina), Windows
@@ -17,4 +19,5 @@ Pre-requisites:
 To deploy: 
 
 cd infrastructure
+
 source deploy_to_aws.sh
