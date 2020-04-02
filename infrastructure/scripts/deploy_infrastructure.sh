@@ -2,16 +2,17 @@
 
 pushd . # Store current directory
 
-# Set up virtual environment 
-cd scripts
+# Set up virtual environment
 source install_venv.sh
 source configure_aws_environment.sh
 
-cd ../../infrastructure/cdk/app
+cd ../cdk/app
 echo "Installing Node modules..."
 npm install
-npm install --save aws-cdk@1.31.0
-npm install --save @aws-cdk/core @aws-cdk/aws-s3 @aws-cdk/aws-lambda @aws-cdk/aws-apigateway @aws-cdk/aws-cognito @aws-cdk/aws-dynamodb
+
+# TODO: Delete below
+# npm install --save aws-cdk@1.31.0
+# npm install --save @aws-cdk/core @aws-cdk/aws-s3 @aws-cdk/aws-iam @aws-cdk/aws-lambda @aws-cdk/aws-apigateway @aws-cdk/aws-cognito @aws-cdk/aws-dynamodb
 
 echo -e "Deploying CDK toolkit stack..."
 cdk bootstrap aws://${AWS_ACCOUNT_ID}/${AWS_REGION}

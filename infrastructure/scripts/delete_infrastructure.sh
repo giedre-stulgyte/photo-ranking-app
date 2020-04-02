@@ -3,11 +3,10 @@
 pushd . # Store current directory
 
 # Set up virtual environment 
-cd scripts
 source install_venv.sh
 source configure_aws_environment.sh
 
-cd ../../infrastructure/cdk/app
+cd ../cdk/app
 echo "Installing Node modules..."
 npm install
 
@@ -28,7 +27,6 @@ aws cloudformation delete-stack --stack-name CDKToolkit
 
 # Deactivate Python virtual environment
 deactivate
-cd ..
 
 echo "Done! Virtual environment deactivated."
 popd # Return to directory
