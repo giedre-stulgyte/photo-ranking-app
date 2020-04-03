@@ -2,7 +2,7 @@ import * as cdk from '@aws-cdk/core';
 import dynamodb = require('@aws-cdk/aws-dynamodb');
 import s3 = require('@aws-cdk/aws-s3');
 import cognito = require('@aws-cdk/aws-cognito')
-import { VerificationEmailStyle, UserPool } from '@aws-cdk/aws-cognito';
+import { VerificationEmailStyle, UserPool, AuthFlow } from '@aws-cdk/aws-cognito';
 import { Duration } from '@aws-cdk/core';
 
 interface MultiStackProps extends cdk.StackProps {
@@ -13,12 +13,21 @@ export class BackendStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props: MultiStackProps) {
     super(scope, id, props);
 
-    var photoUploadBucketName = props.resourcePrefix + "-photo-upload";
-    var dynamoDbTableName = props.resourcePrefix + "-table";
-    var cognitoUserPoolName = props.resourcePrefix + "-user-pool";
-    var cognitoUserPoolClientName = props.resourcePrefix + "-user-pool-client";
+    // AWS Resources IDs
+    const photoUploadBucketName = props.resourcePrefix + "-photo-upload";
+    const dynamoDbTableName = props.resourcePrefix + "-table";
+    const cognitoUserPoolName = props.resourcePrefix + "-user-pool";
+    const cognitoUserPoolClientName = props.resourcePrefix + "-user-pool-client";
+    const cognitoUserPoolDomainName = props.resourcePrefix;
+    const cognitoIdentityPoolName = props.resourcePrefix + "-identity-pool";
+    const cognitoUserPoolAdminGroupName = props.resourcePrefix + "-admin";
 
-    const s3Bucket = new s3.Bucket(this, photoUploadBucketName, {
+    // Output IDs
+    const cognitoUserPoolIdOutput = cognitoUserPoolName + "-id";
+    const cognitoClientIdOutput = cognitoUserPoolClientName + "-id";
+    const cognitoIdentityPoolIdOutput = cognitoIdentityPoolName + "-id";
+
+    const photoUploadBucket = new s3.Bucket(this, photoUploadBucketName, {
     	bucketName: photoUploadBucketName
     });
 
@@ -26,7 +35,7 @@ export class BackendStack extends cdk.Stack {
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING }
     });
 
-    const userPool = new cognito.UserPool(this, cognitoUserPoolName, {
+    const cognitoUserPool = new cognito.UserPool(this, cognitoUserPoolName, {
       userPoolName: cognitoUserPoolName, 
       selfSignUpEnabled: true,
       signInAliases: { username: true, email: true},
@@ -49,13 +58,54 @@ export class BackendStack extends cdk.Stack {
       }
     });
 
-    const userPoolClientProps : cognito.UserPoolClientProps = {
+    const cognitoUserPoolClient = new cognito.UserPoolClient(this, cognitoUserPoolClientName, {
       userPoolClientName: cognitoUserPoolClientName,
-      userPool: userPool,
-      generateSecret: true
-    };
+      userPool: cognitoUserPool,
+      generateSecret: true,
+      enabledAuthFlows: [
+        AuthFlow.ADMIN_NO_SRP,
+        AuthFlow.USER_PASSWORD
+      ]}
+    );
 
-    const cognitoUserPoolClient = new cognito.UserPoolClient(this, cognitoUserPoolClientName, userPoolClientProps);
+    const cognitoUserPoolDomain = new cognito.CfnUserPoolDomain(this, cognitoUserPoolDomainName, {
+      domain: cognitoUserPoolDomainName,
+      userPoolId: cognitoUserPool.userPoolId
+    });
 
+
+    // TODO: Add roles (API Gateway needs ot be setup first)
+    const cognitoIdentityPool = new cognito.CfnIdentityPool(this, cognitoIdentityPoolName, {
+      identityPoolName: cognitoIdentityPoolName,
+      allowUnauthenticatedIdentities: false,
+      cognitoIdentityProviders: [{
+        clientId: cognitoUserPoolClient.userPoolClientId,
+        providerName: cognitoUserPool.userPoolProviderName,
+        serverSideTokenCheck: true
+      }] 
+    });
+
+    const adminUserGroup = new cognito.CfnUserPoolGroup(this, cognitoUserPoolAdminGroupName, {
+      userPoolId: cognitoUserPool.userPoolId,
+      groupName: cognitoUserPoolAdminGroupName
+    });
+
+    const cognitoUserPoolId = new cdk.CfnOutput(this, cognitoUserPoolIdOutput, {
+      value: cognitoUserPool.userPoolId,
+      exportName: cognitoUserPoolIdOutput,
+      description: "Cognito User Pool ID"
+    }); 
+
+    const cognitoClientId = new cdk.CfnOutput(this, cognitoClientIdOutput, {
+      value: cognitoUserPoolClient.userPoolClientId,
+      exportName: cognitoClientIdOutput,
+      description: "Cognito App Client ID"
+    });
+
+    const cognitIdentityPoolId = new cdk.CfnOutput(this, cognitoIdentityPoolIdOutput, {
+      value: cognitoIdentityPool.ref,
+      exportName: cognitoClientIdOutput,
+      description: "Cognito Identity Pool ID"
+    }); 
   }
 }
