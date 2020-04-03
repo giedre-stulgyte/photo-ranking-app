@@ -102,7 +102,7 @@ export class BackendStack extends cdk.Stack {
       description: "Cognito App Client ID"
     });
 
-    const cognitIdentityPoolId = new cdk.CfnOutput(this, cognitoIdentityPoolIdOutput, {
+    const cognitoIdentityPoolId = new cdk.CfnOutput(this, cognitoIdentityPoolIdOutput, {
       value: cognitoIdentityPool.ref,
       exportName: cognitoIdentityPoolIdOutput,
       description: "Cognito Identity Pool ID"

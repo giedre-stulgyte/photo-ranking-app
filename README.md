@@ -22,4 +22,4 @@ To deploy:
 
 - cd deploy
 - source deploy_infrastructure.sh
-- source deploy_frontent.sh
+- source deploy_frontend.sh
