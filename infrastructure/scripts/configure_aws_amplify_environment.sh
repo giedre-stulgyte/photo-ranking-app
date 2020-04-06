@@ -2,8 +2,8 @@
 
 echo "Setting AWS Amplify environment variables..."
 
-if [ -z ${AWS_ACCOUNT_I3D} ]; then
-	echo "Missing AWS bredentials. Please refer to the README before running this script again. Aborting"; 
+if [ -z ${AWS_ACCOUNT_ID} ]; then
+	echo "Missing AWS credentials. Please refer to the README before running this script again. Aborting"; 
 	return
 else
     export FRONTEND_BUCKET_NAME_URL="s3://${APP_NAME}-frontend"
