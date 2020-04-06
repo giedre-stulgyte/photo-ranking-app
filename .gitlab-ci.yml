@@ -11,6 +11,7 @@ stages:
   script:
     - pip install npm
     - pip install awscli
+    - cd infrastructure/scripts
     - source infrastructure/scripts/deploy_infrastructure.sh
 
 deploy-backend-master:
