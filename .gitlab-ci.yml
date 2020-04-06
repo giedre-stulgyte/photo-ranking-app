@@ -1,0 +1,74 @@
+stages:
+  - deploy-backend
+  - deploy-frontend
+  - delete-resources
+
+# .deploy-backend job is extended by per branch and master jobs
+.deploy-backend:
+  image: 
+  stage: deploy-backend
+  script:
+    - pip install npm
+    - source infrastructure/scripts/deploy_infrastructure.sh
+
+deploy-backend-master:
+  extends: .deploy-backend
+  only:
+    refs:
+      - master
+
+deploy-backend-branch:
+  extends: .deploy-backend
+  except:
+    refs:
+      - master
+  before_script:
+    - export APP_NAME="${APP_NAME}-${CI_COMMIT_REF_SLUG}"
+
+# .deploy-frontend job is extended by per branch and master jobs
+.deploy-frontend:
+  image:
+  stage: deploy-frontend
+  script: 
+    - pip install npm
+    - source infrastructure/scripts/configure_aws_amplify_environment.sh
+    - cd frontend/photo-ranking-app
+    - npm run build && aws s3 sync build/ ${FRONTEND_BUCKET_NAME_URL}
+
+deploy-frontend-branch:
+  extends: .deploy-frontend
+  except:
+    refs:
+      - master
+  before_script:
+     - export APP_NAME="${APP_NAME}-${CI_COMMIT_REF_SLUG}"
+
+deploy-frontend-master:
+  extends: .deploy-frontend
+  only:
+    refs:
+      - master
+
+# .delete-resources job is extended by per branch and master jobs
+.delete-resources:
+  image:
+  stage: delete-resouces
+  when: manual
+  script:
+    - pip install npm
+    - source infrastructure/scripts/delete-infrastructure.sh
+
+delete-resources-master:
+  extends: .delete-resources
+  only:
+    refs:
+      - master
+
+delete-resources-branch:
+  extends: .delete-resources
+  except:
+    refs:
+      - master
+  before_script:
+     - export APP_NAME="${APP_NAME}-${CI_COMMIT_REF_SLUG}"
+  
