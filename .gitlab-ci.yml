@@ -1,4 +1,4 @@
-image: python:3.7
+image: node:latest
 
 stages:
   - deploy-backend
@@ -9,8 +9,6 @@ stages:
 .deploy-backend-job:
   stage: deploy-backend
   script:
-    - pip install npm
-    - pip install awscli
     - cd infrastructure/scripts
     - source deploy_infrastructure.sh
 
@@ -31,11 +29,10 @@ deploy-backend-branch:
 # .deploy-frontend job is extended by per branch and master jobs
 .deploy-frontend-job:
   stage: deploy-frontend
-  script: 
-    - pip install npm
-    - pip install awscli
+  script:
     - source infrastructure/scripts/configure_aws_amplify_environment.sh
     - cd frontend/photo-ranking-app
+    - npm install aws-cli
     - npm run build && aws s3 sync build/ ${FRONTEND_BUCKET_NAME_URL}
 
 deploy-frontend-branch:
