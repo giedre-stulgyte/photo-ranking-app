@@ -1,3 +1,5 @@
+image: python:3.7
+
 stages:
   - deploy-backend
   - deploy-frontend
@@ -8,6 +10,7 @@ stages:
   stage: deploy-backend
   script:
     - pip install npm
+    - pip install awscli
     - source infrastructure/scripts/deploy_infrastructure.sh
 
 deploy-backend-master:
@@ -29,6 +32,7 @@ deploy-backend-branch:
   stage: deploy-frontend
   script: 
     - pip install npm
+    - pip install awscli
     - source infrastructure/scripts/configure_aws_amplify_environment.sh
     - cd frontend/photo-ranking-app
     - npm run build && aws s3 sync build/ ${FRONTEND_BUCKET_NAME_URL}
@@ -53,6 +57,7 @@ deploy-frontend-master:
   when: manual
   script:
     - pip install npm
+    - pip install awscli
     - source infrastructure/scripts/delete-infrastructure.sh
 
 delete-resources-master:
