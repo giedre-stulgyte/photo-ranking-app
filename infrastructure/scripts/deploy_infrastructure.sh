@@ -2,6 +2,7 @@
 
 cd ../cdk/app
 echo "Installing Node modules..."
+npm install -g aws-cdk@1.31.0
 npm install
 
 echo -e "Deploying CDK toolkit stack..."
