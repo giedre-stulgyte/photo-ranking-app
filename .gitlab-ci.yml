@@ -12,7 +12,7 @@ stages:
     - pip install npm
     - pip install awscli
     - cd infrastructure/scripts
-    - source infrastructure/scripts/deploy_infrastructure.sh
+    - source deploy_infrastructure.sh
 
 deploy-backend-master:
   extends: .deploy-backend-job
@@ -59,7 +59,8 @@ deploy-frontend-master:
   script:
     - pip install npm
     - pip install awscli
-    - source infrastructure/scripts/delete-infrastructure.sh
+    - cd infrastructure/scripts
+    - source elete-infrastructure.sh
 
 delete-resources-master:
   extends: .delete-resources-job
