@@ -5,7 +5,7 @@ pushd . # Store current directory
 # Set up virtual environment 
 cd ../infrastructure/scripts
 source install_venv.sh
-source configure_aws_environment.sh
+source configure_aws_credentials.sh
 source configure_aws_amplify_environment.sh
 
 cd ../../frontend/photo-ranking-app
